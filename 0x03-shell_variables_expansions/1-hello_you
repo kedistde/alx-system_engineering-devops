@@ -1,2 +1,3 @@
 #!/bin/bash
-echo "hello $(whoami)"
+echo "Hello $(whoami | sed 's/^./\u&/')" with proper capitalization
+
