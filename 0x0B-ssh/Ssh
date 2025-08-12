@@ -1,0 +1,38 @@
+#!/bin/bash
+# Script to add a specific SSH public key to ubuntu user's authorized_keys
+
+# Define the public key
+PUBLIC_KEY="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDNdtrNGtTXe5Tp1EJQop8mOSAuRGLjJ6DW4PqX4wId/Kawz35ESampIqHSOTJmbQ8UlxdJuk0gAXKk3Ncle4safGYqM/VeDK3LN5iAJxf4kcaxNtS3eVxWBE5iF3FbIjOqwxw5Lf5sRa5yXxA8HfWidhbIG5TqKL922hPgsCGABIrXRlfZYeC0FEuPWdr6smOElSVvIXthRWp9cr685KdCI+COxlj1RdVsvIo+zunmLACF9PYdjB2s96Fn0ocD3c5SGLvDOFCyvDojSAOyE70ebIElnskKsDTGwfT4P6jh9OBzTyQEIS2jOaE5RQq4IB4DsMhvbjDSQrP0MdCLgwkN"
+
+# Check if running as root
+if [ "$(id -u)" -ne 0 ]; then
+  echo "This script must be run as root" >&2
+  exit 1
+fi
+
+# Ensure the ubuntu user exists
+if ! id -u ubuntu &>/dev/null; then
+  echo "Error: ubuntu user does not exist" >&2
+  exit 1
+fi
+
+# Create .ssh directory if it doesn't exist
+UBUNTU_HOME=$(getent passwd ubuntu | cut -d: -f6)
+SSH_DIR="$UBUNTU_HOME/.ssh"
+AUTH_KEYS="$SSH_DIR/authorized_keys"
+
+mkdir -p "$SSH_DIR"
+chown ubuntu:ubuntu "$SSH_DIR"
+chmod 700 "$SSH_DIR"
+
+# Add the public key if it's not already there
+if ! grep -q "$PUBLIC_KEY" "$AUTH_KEYS" 2>/dev/null; then
+  echo "$PUBLIC_KEY" >> "$AUTH_KEYS"
+  chown ubuntu:ubuntu "$AUTH_KEYS"
+  chmod 600 "$AUTH_KEYS"
+  echo "Successfully added SSH public key to ubuntu's authorized_keys"
+else
+  echo "SSH public key already exists in authorized_keys"
+fi
+
+exit 0
