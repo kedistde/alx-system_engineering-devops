@@ -1,2 +1,2 @@
 #!/bin/bash
-echo $((36#$WATER + 36#$STIR)) | tr '0-9' 'a-j'
+printf '%x\n' $((36#$WATER + 36#$STIR)) | tr '0-9a-f' 'bestchol'
