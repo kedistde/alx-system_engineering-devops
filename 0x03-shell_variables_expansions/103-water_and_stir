@@ -1,2 +1,5 @@
 #!/bin/bash
-echo $WATER$STIR | tr 'waterstir' 'bestchol'
+water_val=$(echo $WATER | tr 'water' '01234')
+stir_val=$(echo $STIR | tr 'stir' '0123')
+result=$((5#$water_val + 4#$stir_val))
+printf '%s\n' "$result" | tr '01234567' 'bestchol'
